@@ -1,6 +1,6 @@
 #!/bin/sh
 # macOS defaults — run via `make macos [section ...]`
-# Sections: keyboard dock finder trackpad mouse screenshots (default: all)
+# Sections: keyboard dock finder trackpad mouse screenshots sound windowmanager (default: all)
 # Backs up current values to an executable restore script before changing anything.
 set -e
 
@@ -18,42 +18,120 @@ set_default() { # domain key type value
 }
 
 keyboard() {
+    # Fast key repeat rate
     set_default NSGlobalDomain KeyRepeat int 2
+    # Short delay before key repeat starts
     set_default NSGlobalDomain InitialKeyRepeat int 15
+    # Hold a key to repeat it instead of showing the accent popup
     set_default NSGlobalDomain ApplePressAndHoldEnabled bool false
+    # No automatic capitalization
     set_default NSGlobalDomain NSAutomaticCapitalizationEnabled bool false
+    # No smart quotes
     set_default NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled bool false
+    # No smart dashes
     set_default NSGlobalDomain NSAutomaticDashSubstitutionEnabled bool false
+    # No period on double-space
+    set_default NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled bool false
+    # No autocorrect
+    set_default NSGlobalDomain NSAutomaticSpellingCorrectionEnabled bool false
+    # No autocorrect in web text fields
+    set_default NSGlobalDomain WebAutomaticSpellingCorrectionEnabled bool false
+    # Never auto-tab new windows, only manually
+    set_default NSGlobalDomain AppleWindowTabbingMode string manual
 }
 
 dock() {
+    # Auto-hide the dock
     set_default com.apple.dock autohide bool true
+    # Show the hidden dock immediately on hover
     set_default com.apple.dock autohide-delay float 0
+    # Dock icon size
     set_default com.apple.dock tilesize int 68
+    # Don't show recent apps in the dock
     set_default com.apple.dock show-recents bool false
+    # Faster hide/show animation
+    set_default com.apple.dock autohide-time-modifier float 0.4
+    # Don't rearrange Spaces by most recent use
+    set_default com.apple.dock mru-spaces bool false
+    # No indicator dots under running apps
+    set_default com.apple.dock show-process-indicators bool false
+    # Disable the bottom-right Quick Note hot corner
+    set_default com.apple.dock wvous-br-corner int 1
+    # Swipe down with three fingers for App Expose
+    set_default com.apple.dock showAppExposeGestureEnabled bool true
 }
 
 finder() {
+    # Always show file extensions
     set_default NSGlobalDomain AppleShowAllExtensions bool true
+    # Show the path bar at the bottom of Finder windows
     set_default com.apple.finder ShowPathbar bool true
+    # List view as default
     set_default com.apple.finder FXPreferredViewStyle string Nlsv
+    # Don't create .DS_Store files on network drives
     set_default com.apple.desktopservices DSDontWriteNetworkStores bool true
+    # Show status bar (item count and free space)
+    set_default com.apple.finder ShowStatusBar bool true
+    # Full POSIX path in window title
+    set_default com.apple.finder _FXShowPosixPathInTitle bool true
+    # Search the current folder by default
+    set_default com.apple.finder FXDefaultSearchScope string SCcf
+    # New windows open in Downloads
+    set_default com.apple.finder NewWindowTarget string PfLo
+    set_default com.apple.finder NewWindowTargetPath string "file://$HOME/Downloads/"
+    # Open folders in new windows instead of tabs
+    set_default com.apple.finder FinderSpawnTab bool false
+    # No external/removable drive icons on the desktop
+    set_default com.apple.finder ShowExternalHardDrivesOnDesktop bool false
+    set_default com.apple.finder ShowRemovableMediaOnDesktop bool false
 }
 
 trackpad() {
+    # Tap to click
     set_default com.apple.AppleMultitouchTrackpad Clicking bool true
+    # Max tracking speed (0-3)
+    set_default NSGlobalDomain com.apple.trackpad.scaling float 3
+    # Disable Force Click (both keys are the same setting, seen from driver and system)
+    set_default com.apple.AppleMultitouchTrackpad ForceSuppressed bool true
+    set_default NSGlobalDomain com.apple.trackpad.forceClick bool false
 }
 
 mouse() {
+    # Mouse tracking speed
     set_default NSGlobalDomain com.apple.mouse.scaling float 0.875
 }
 
 screenshots() {
+    # Save screenshots to Downloads
     set_default com.apple.screencapture location string "$HOME/Downloads"
+    # Save as png
     set_default com.apple.screencapture type string png
+    # No floating thumbnail, save immediately
+    set_default com.apple.screencapture show-thumbnail bool false
 }
 
-ALL="keyboard dock finder trackpad mouse screenshots"
+sound() {
+    # No UI sound effects (trash, screenshots, etc.)
+    set_default NSGlobalDomain com.apple.sound.uiaudio.enabled int 0
+    # No pop sound when changing volume
+    set_default NSGlobalDomain com.apple.sound.beep.feedback int 0
+    # Alert sound: Purr
+    set_default NSGlobalDomain com.apple.sound.beep.sound string /System/Library/Sounds/Purr.aiff
+}
+
+windowmanager() {
+    # Tiled windows without margins
+    set_default com.apple.WindowManager EnableTiledWindowMargins bool false
+    # Don't tile windows when dragged to screen edges
+    set_default com.apple.WindowManager EnableTilingByEdgeDrag bool false
+    set_default com.apple.WindowManager EnableTopTilingByEdgeDrag bool false
+    # No Option-drag tiling
+    set_default com.apple.WindowManager EnableTilingOptionAccelerator bool false
+    # Hide desktop widgets
+    set_default com.apple.WindowManager StandardHideWidgets bool true
+}
+
+ALL="keyboard dock finder trackpad mouse screenshots sound windowmanager"
 { [ $# -eq 0 ] || [ "$1" = all ]; } && set -- $ALL
 for section in "$@"; do
     echo "» $section"

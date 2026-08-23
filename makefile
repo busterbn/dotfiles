@@ -32,7 +32,7 @@ help:
 	@echo "  make ssh      - authorize bn@mac.local ssh key (+ enable Remote Login on macOS)"
 	@echo "  make git      - install global gitignore"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
-	@echo "                  optional sections: keyboard dock finder trackpad mouse screenshots"
+	@echo "                  optional sections: keyboard dock finder trackpad mouse screenshots sound windowmanager"
 
 update:
 ifeq ($(PKG),apt-get)
@@ -106,7 +106,7 @@ ifneq ($(PKG),brew)
 endif
 	sh configs/macos.sh $(filter-out macos,$(MAKECMDGOALS))
 
-MACOS_SECTIONS := all keyboard dock finder trackpad mouse screenshots
+MACOS_SECTIONS := all keyboard dock finder trackpad mouse screenshots sound windowmanager
 .PHONY: $(MACOS_SECTIONS)
 $(MACOS_SECTIONS):
 	@:
