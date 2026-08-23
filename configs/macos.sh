@@ -66,8 +66,8 @@ finder() {
     set_default NSGlobalDomain AppleShowAllExtensions bool true
     # Show the path bar at the bottom of Finder windows
     set_default com.apple.finder ShowPathbar bool true
-    # List view as default
-    set_default com.apple.finder FXPreferredViewStyle string Nlsv
+    # Column view as default
+    set_default com.apple.finder FXPreferredViewStyle string clmv
     # Don't create .DS_Store files on network drives
     set_default com.apple.desktopservices DSDontWriteNetworkStores bool true
     # Show status bar (item count and free space)
