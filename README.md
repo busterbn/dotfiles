@@ -32,12 +32,14 @@ Before anything is changed, the old values are saved to an executable restore sc
 
 | Section | What it does |
 |---|---|
-| `keyboard` | Fastest key repeat, shortest repeat delay, hold-to-repeat instead of accent popup, no auto-capitalization, no smart quotes/dashes |
-| `dock` | Auto-hide with no delay, icon size 68, hide recent apps |
-| `finder` | Show all file extensions, show path bar, list view by default, no `.DS_Store` on network drives |
-| `trackpad` | Tap to click |
+| `keyboard` | Fastest key repeat, shortest repeat delay, hold-to-repeat instead of accent popup, no auto-capitalization, no smart quotes/dashes, no period on double-space, no autocorrect (system + web), windows never auto-tab |
+| `dock` | Auto-hide with no delay and fast animation, icon size 68, hide recent apps, keep Spaces in fixed order, no dots under running apps, disable Quick Note hot corner, three-finger swipe down for App Exposé |
+| `finder` | Show all file extensions, path bar and status bar, column view by default, full POSIX path in window title, search current folder by default, new windows open in `~/Downloads`, folders open in windows instead of tabs, no drive icons on the desktop, no `.DS_Store` on network drives |
+| `trackpad` | Tap to click, max tracking speed, disable Force Click |
 | `mouse` | Pointer speed 0.875 |
-| `screenshots` | Save to `~/Downloads` as PNG |
+| `screenshots` | Save to `~/Downloads` as PNG, no floating thumbnail |
+| `sound` | No UI sound effects, no volume-change pop, alert sound Purr |
+| `windowmanager` | Tiled windows without margins, no tiling on edge drag or Option-drag, hide desktop widgets |
 
 ## ✨ What you get
 
