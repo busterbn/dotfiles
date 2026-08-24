@@ -24,6 +24,11 @@ Installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles` and
 | `make ssh` | Authorize my SSH key (+ enable Remote Login on macOS) | all |
 | `make git` | Install global gitignore | all |
 | `make macos [section …]` | Apply macOS defaults (backs up old values first) | macOS |
+| `make screenclip` | Launch agent that also copies new screenshots to the clipboard | macOS |
+
+> **Note (`make screenclip`):** The launch agent reads `~/Downloads`, which macOS blocks for background
+> processes. Grant access once per machine: System Settings → Privacy & Security → **Full Disk Access**
+> → `+` → press Cmd+Shift+G, enter `/bin/sh`, add it and toggle it on.
 
 ### `make macos` sections
 
