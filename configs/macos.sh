@@ -70,8 +70,9 @@ finder() {
     set_default com.apple.finder FXPreferredViewStyle string clmv
     # Auto-resize columns to fit the longest filename
     set_default com.apple.finder _FXEnableColumnAutoSizing bool true
-    # Don't create .DS_Store files on network drives
+    # Don't create .DS_Store files on network drives or USB drives
     set_default com.apple.desktopservices DSDontWriteNetworkStores bool true
+    set_default com.apple.desktopservices DSDontWriteUSBStores bool true
     # Show status bar (item count and free space)
     set_default com.apple.finder ShowStatusBar bool true
     # Full POSIX path in window title
@@ -83,9 +84,26 @@ finder() {
     set_default com.apple.finder NewWindowTargetPath string "file://$HOME/Downloads/"
     # Open folders in new windows instead of tabs
     set_default com.apple.finder FinderSpawnTab bool false
+    # Allow quitting Finder with Cmd+Q
+    set_default com.apple.finder QuitMenuItem bool true
+    # No warning when changing a file extension
+    set_default com.apple.finder FXEnableExtensionChangeWarning bool false
+    # Save dialogs always open expanded with the folder tree
+    set_default NSGlobalDomain NSNavPanelExpandedStateForSaveMode bool true
+    set_default NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 bool true
     # No external/removable drive icons on the desktop
     set_default com.apple.finder ShowExternalHardDrivesOnDesktop bool false
     set_default com.apple.finder ShowRemovableMediaOnDesktop bool false
+    # Don't show hidden files (toggle per window with Cmd+Shift+.)
+    set_default com.apple.finder AppleShowAllFiles bool false
+    # No confirmation when emptying the trash
+    set_default com.apple.finder WarnOnEmptyTrash bool false
+    # No "Recent Tags" in the sidebar
+    set_default com.apple.finder ShowRecentTags bool false
+    # Faster spring-loaded folders when dragging
+    set_default NSGlobalDomain com.apple.springing.delay float 0.2
+    # Small sidebar icons (1-3 = small/medium/large)
+    set_default NSGlobalDomain NSTableViewDefaultSizeMode int 1
 }
 
 trackpad() {
