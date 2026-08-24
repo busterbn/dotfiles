@@ -68,6 +68,8 @@ finder() {
     set_default com.apple.finder ShowPathbar bool true
     # Column view as default
     set_default com.apple.finder FXPreferredViewStyle string clmv
+    # Auto-resize columns to fit the longest filename
+    set_default com.apple.finder _FXEnableColumnAutoSizing bool true
     # Don't create .DS_Store files on network drives
     set_default com.apple.desktopservices DSDontWriteNetworkStores bool true
     # Show status bar (item count and free space)
