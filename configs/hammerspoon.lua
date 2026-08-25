@@ -12,8 +12,17 @@ screenshotWatcher = hs.pathwatcher.new(downloads, function(files, flags)
 end):start()
 
 -- Shortcuts
-local function launch(app)
-    return function() hs.application.launchOrFocus(app) end
+-- App launchers focus the app, or hide it if it's already in front.
+-- `name` is the running process name; `launchTarget` the launch name/path if it differs.
+local function toggle(name, launchTarget)
+    return function()
+        local app = hs.application.get(name)
+        if app and app:isFrontmost() then
+            app:hide()
+        else
+            hs.application.launchOrFocus(launchTarget or name)
+        end
+    end
 end
 
 local function toggleDarkMode()
@@ -28,23 +37,23 @@ hs.hotkey.bind({"cmd"}, "f5", toggleDarkMode)
 hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
 
 -- App launchers
-hs.hotkey.bind({"alt", "cmd"}, "space", launch("Finder"))
-hs.hotkey.bind({"alt"}, "space", launch("iTerm"))
+hs.hotkey.bind({"alt", "cmd"}, "space", toggle("Finder"))
+hs.hotkey.bind({"alt"}, "space", toggle("iTerm2", "iTerm"))
 
 -- Fn+key launchers: "fn" is not a real modifier in hs.hotkey, so use an eventtap
 local fnApps = {
-    m = os.getenv("HOME") .. "/Applications/fMessenger.app",
-    n = "Messages",
-    o = "Obsidian",
+    m = toggle("fMessenger", os.getenv("HOME") .. "/Applications/fMessenger.app"),
+    n = toggle("Messages"),
+    o = toggle("Obsidian"),
 }
 fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     local flags = e:getFlags()
     if not (flags.fn and not flags.cmd and not flags.alt and not flags.ctrl and not flags.shift) then
         return false
     end
-    local app = fnApps[hs.keycodes.map[e:getKeyCode()]]
-    if not app then return false end
-    hs.application.launchOrFocus(app)
+    local fn = fnApps[hs.keycodes.map[e:getKeyCode()]]
+    if not fn then return false end
+    fn()
     return true
 end):start()
 
