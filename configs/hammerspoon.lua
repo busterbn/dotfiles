@@ -57,4 +57,25 @@ fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     return true
 end):start()
 
+-- noTunes replacement: if Apple Music tries to launch (play/pause key,
+-- AirPods connect, ...), kill it and open Spotify instead
+musicWatcher = hs.application.watcher.new(function(name, event, app)
+    if event == hs.application.watcher.launching and name == "Music" then
+        app:kill9()
+        hs.application.launchOrFocus("Spotify")
+    end
+end):start()
+
+-- Mute when audio output falls back from Bluetooth (headphones/speaker disconnected)
+local lastTransport = hs.audiodevice.defaultOutputDevice():transportType()
+hs.audiodevice.watcher.setCallback(function(event)
+    if event ~= "dOut" then return end
+    local out = hs.audiodevice.defaultOutputDevice()
+    if lastTransport == "Bluetooth" and out:transportType() ~= "Bluetooth" then
+        out:setMuted(true)
+    end
+    lastTransport = out:transportType()
+end)
+hs.audiodevice.watcher.start()
+
 hs.notify.show("Hammerspoon", "", "Config loaded")
