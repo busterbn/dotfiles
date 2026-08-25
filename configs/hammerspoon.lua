@@ -58,9 +58,11 @@ fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 end):start()
 
 -- Window snapping on Caps Lock (Loop replacement)
--- Caps Lock is remapped to F18 with hidutil (not persistent across reboots,
--- but this config runs at every login since Hammerspoon starts at login).
-hs.execute([[hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x70000006D}]}']])
+-- Caps Lock is remapped to RIGHT Ctrl with hidutil, so holding Caps IS holding Ctrl
+-- (Caps+Tab cycles tabs natively, Caps+click right-clicks, etc.). The snapping keys
+-- below only react to right Ctrl, so the physical (left) Ctrl key is unaffected.
+-- The remap isn't persistent across reboots, but this config runs at every login.
+hs.execute([[hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E4}]}']])
 hs.window.animationDuration = 0
 
 -- Repeated presses cycle through the positions, Loop-style ({x, y, w, h} in screen units)
@@ -110,19 +112,26 @@ local function snapPress(key)
     snapState[win:id()] = {key = key, idx = idx, time = now}
 end
 
-snap = hs.hotkey.modal.new()
-hs.hotkey.bind({}, "f18", function() snap:enter() end, function() snap:exit() end)
-for _, key in ipairs({"w", "a", "s", "d"}) do
-    snap:bind({}, key, function() snapPress(key) end)
-end
-snap:bind({}, "q", function()
+local snapKeys = { w = true, a = true, s = true, d = true, q = true, e = true }
+snapTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
+    if e:rawFlags() & hs.eventtap.event.rawFlagMasks.deviceRightControl == 0 then
+        return false
+    end
+    local key = hs.keycodes.map[e:getKeyCode()]
+    if not snapKeys[key] then return false end
+    if e:getProperty(hs.eventtap.event.properties.keyboardEventAutorepeat) ~= 0 then
+        return true -- swallow key repeat so holding a key doesn't spin the cycle
+    end
     local win = hs.window.focusedWindow()
-    if win then win:moveToScreen(win:screen():previous()) end
-end)
-snap:bind({}, "e", function()
-    local win = hs.window.focusedWindow()
-    if win then win:moveToScreen(win:screen():next()) end
-end)
+    if key == "q" then
+        if win then win:moveToScreen(win:screen():previous()) end
+    elseif key == "e" then
+        if win then win:moveToScreen(win:screen():next()) end
+    else
+        snapPress(key)
+    end
+    return true
+end):start()
 
 -- noTunes replacement: if Apple Music tries to launch (play/pause key,
 -- AirPods connect, ...), kill it and open Spotify instead
