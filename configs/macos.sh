@@ -41,9 +41,13 @@ keyboard() {
 }
 
 keyboard_shortcuts() {
-    # Opt+Tab moves focus to next window (symbolic hotkey 27, nested dict so not backed up)
-    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 27 \
-        '<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>48</integer><integer>524288</integer></array><key>type</key><string>standard</string></dict></dict>'
+    # Full snapshot of System Settings > Keyboard > Keyboard Shortcuts: almost every
+    # system shortcut disabled, Opt+Tab = move focus to next window. Not backed up.
+    # Refresh the snapshot with: defaults export com.apple.symbolichotkeys configs/symbolichotkeys.plist
+    defaults import com.apple.symbolichotkeys "$(dirname "$0")/symbolichotkeys.plist"
+    # Same for the Services menu shortcuts (all disabled), stored in the pbs domain.
+    # Refresh with: defaults export pbs configs/services.plist
+    defaults import pbs "$(dirname "$0")/services.plist"
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null \
         || echo "note: could not apply hotkey changes live, log out and back in to apply"
 }

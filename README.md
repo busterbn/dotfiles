@@ -37,7 +37,7 @@ Before anything is changed, the old values are saved to an executable restore sc
 | Section | What it does |
 |---|---|
 | `keyboard` | Fastest key repeat, shortest repeat delay, hold-to-repeat instead of accent popup, no auto-capitalization, no smart quotes/dashes, no period on double-space, no autocorrect (system + web), windows never auto-tab |
-| `keyboard_shortcuts` | Opt+Tab moves focus to next window |
+| `keyboard_shortcuts` | Imports full snapshots of system keyboard shortcuts (`configs/symbolichotkeys.plist`) and Services shortcuts (`configs/services.plist`): almost everything disabled, Opt+Tab moves focus to next window |
 | `dock` | Auto-hide with no delay and fast animation, icon size 68, hide recent apps, keep Spaces in fixed order, no dots under running apps, disable Quick Note hot corner, three-finger swipe down for App Exposé |
 | `finder` | Show all file extensions, path bar and status bar, column view by default with auto-sized columns, full POSIX path in window title, search current folder by default, new windows open in `~/Downloads`, folders open in windows instead of tabs, no extension-change warning, Finder can quit with Cmd+Q, save dialogs always open expanded, no drive icons on the desktop, hidden files stay hidden, no empty-trash confirmation, no Recent Tags in the sidebar, faster spring-loaded folders, small sidebar icons, no `.DS_Store` on network or USB drives |
 | `trackpad` | Tap to click, max tracking speed, disable Force Click |
