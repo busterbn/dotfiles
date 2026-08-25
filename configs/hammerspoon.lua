@@ -38,23 +38,32 @@ hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
 
 -- App launchers
 hs.hotkey.bind({"alt", "cmd"}, "space", toggle("Finder"))
--- Alt+Space: toggle iTerm — but with Finder in front, open iTerm in Finder's folder
-local toggleITerm = toggle("iTerm2", "iTerm")
-hs.hotkey.bind({"alt"}, "space", function()
-    if hs.application.frontmostApplication():name() == "Finder" then
-        local ok, path = hs.osascript.applescript(
-            'tell application "Finder" to get POSIX path of (target of front window as alias)')
-        if ok and path then
-            hs.execute('open -a iTerm "' .. path .. '"')
-            return
+-- With Finder in front, returns the front Finder window's folder (else nil)
+local function finderPath()
+    if hs.application.frontmostApplication():name() ~= "Finder" then return nil end
+    local ok, path = hs.osascript.applescript(
+        'tell application "Finder" to get POSIX path of (target of front window as alias)')
+    return ok and path or nil
+end
+
+-- Toggle the app — but with Finder in front, open Finder's folder in the app
+local function toggleOrOpenFolder(name, launchTarget)
+    local toggleApp = toggle(name, launchTarget)
+    return function()
+        local path = finderPath()
+        if path then
+            hs.execute('open -a "' .. (launchTarget or name) .. '" "' .. path .. '"')
+        else
+            toggleApp()
         end
     end
-    toggleITerm()
-end)
+end
+
+hs.hotkey.bind({"alt"}, "space", toggleOrOpenFolder("iTerm2", "iTerm"))
 
 -- Fn+key launchers: "fn" is not a real modifier in hs.hotkey, so use an eventtap
 local fnApps = {
-    c = toggle("Code", "Visual Studio Code"),
+    c = toggleOrOpenFolder("Code", "Visual Studio Code"),
     m = toggle("fMessenger", os.getenv("HOME") .. "/Applications/fMessenger.app"),
     n = toggle("Messages"),
     o = toggle("Obsidian"),
