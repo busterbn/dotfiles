@@ -47,10 +47,10 @@ keyboard() {
 keyboard_shortcuts() {
     # Full snapshot of System Settings > Keyboard > Keyboard Shortcuts: almost every
     # system shortcut disabled, Opt+Tab = move focus to next window. Not backed up.
-    # Refresh the snapshot with: defaults export com.apple.symbolichotkeys configs/macos/symbolichotkeys.plist
+    # Refresh the snapshot with: make snapshot macos
     defaults import com.apple.symbolichotkeys "$(dirname "$0")/symbolichotkeys.plist"
     # Same for the Services menu shortcuts (all disabled), stored in the pbs domain.
-    # Refresh with: defaults export pbs configs/macos/services.plist
+    # Refresh with: make snapshot macos
     defaults import pbs "$(dirname "$0")/services.plist"
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null \
         || echo "note: could not apply hotkey changes live, log out and back in to apply"

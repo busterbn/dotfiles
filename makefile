@@ -18,7 +18,11 @@ else
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help update deps font p10k iterm2 ssh git macos hammerspoon
+.PHONY: help update deps font p10k iterm2 ssh git macos hammerspoon snapshot
+
+# `make snapshot <target>` runs the snapshot target with <target> as an
+# argument, so the real install targets are no-ops while snapshotting
+SNAPSHOTTING := $(filter snapshot,$(MAKECMDGOALS))
 
 SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUeG60x8YPAyKq8lHlLkWJ7PSWMA9QT1UDZDjhBsV45 bn@mac.local
 
@@ -34,6 +38,7 @@ help:
 	@echo "  make hammerspoon - install Hammerspoon + config (screenshots also go to clipboard)"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
 	@echo "                  optional sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
+	@echo "  make snapshot [iterm2] [macos] - save current settings back into configs/"
 
 update:
 ifeq ($(PKG),apt-get)
@@ -86,16 +91,18 @@ endif
 	touch $(HOME)/.hushlogin
 	@python3 -c 'import json,os,sys; p=sys.argv[1]; s=json.load(open(p)) if os.path.exists(p) else {}; s.setdefault("terminal.integrated.fontFamily","MesloLGS NF"); os.makedirs(os.path.dirname(p),exist_ok=True); json.dump(s,open(p,"w"),indent=4)' "$(VSCODE_SETTINGS)"
 
-iterm2: font
+iterm2: $(if $(SNAPSHOTTING),,font)
 ifneq ($(PKG),brew)
 	$(error make iterm2 is macOS only)
 endif
+ifeq ($(SNAPSHOTTING),)
 	[ -d /Applications/iTerm.app ] || brew install --cask iterm2
 	mkdir -p "$(HOME)/Library/Application Support/iTerm2/DynamicProfiles"
 	python3 -c 'import json,os; p=json.load(open("configs/iterm2/profile.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
 	sh configs/iterm2/defaults.sh $(ITERM_GUID)
 	touch $(HOME)/.hushlogin
 	@echo "Restart iTerm2 to apply"
+endif
 
 git:
 	cp configs/git/.gitignore_global $(HOME)/.gitignore_global
@@ -115,7 +122,25 @@ macos:
 ifneq ($(PKG),brew)
 	$(error make macos is macOS only)
 endif
+ifeq ($(SNAPSHOTTING),)
 	sh configs/macos/defaults.sh $(filter-out macos,$(MAKECMDGOALS))
+endif
+
+# Save current settings back into configs/ (e.g. after tweaking things in a GUI)
+snapshot:
+ifneq ($(PKG),brew)
+	$(error make snapshot is macOS only)
+endif
+ifneq ($(filter iterm2,$(MAKECMDGOALS)),)
+	defaults export com.googlecode.iterm2 - | plutil -extract GlobalKeyMap xml1 -o configs/iterm2/globalkeymap.plist -
+endif
+ifneq ($(filter macos,$(MAKECMDGOALS)),)
+	defaults export com.apple.symbolichotkeys configs/macos/symbolichotkeys.plist
+	defaults export pbs configs/macos/services.plist
+endif
+ifeq ($(filter iterm2 macos,$(MAKECMDGOALS)),)
+	@echo "Usage: make snapshot [iterm2] [macos]"
+endif
 
 MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager
 .PHONY: $(MACOS_SECTIONS)

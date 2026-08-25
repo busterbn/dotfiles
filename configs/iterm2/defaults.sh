@@ -25,3 +25,6 @@ defaults write com.googlecode.iterm2 HapticFeedbackForEsc -bool false
 defaults write com.googlecode.iterm2 AllowClipboardAccess -bool true
 # Windows resize freely instead of snapping to character cells (plays nice with Hammerspoon)
 defaults write com.googlecode.iterm2 DisableWindowSizeSnap -bool true
+# Global key bindings — refresh the snapshot with: make snapshot iterm2
+keymap="$(dirname "$0")/globalkeymap.plist"
+[ -f "$keymap" ] && defaults write com.googlecode.iterm2 GlobalKeyMap "$(cat "$keymap")"

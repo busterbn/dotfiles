@@ -25,6 +25,7 @@ Installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles` and
 | `make git` | Install global gitignore | all |
 | `make macos [section …]` | Apply macOS defaults (backs up old values first) | macOS |
 | `make hammerspoon` | Hammerspoon + config: new screenshots are also copied to the clipboard | macOS |
+| `make snapshot [iterm2] [macos]` | Save current settings back into `configs/`: iTerm2 key bindings (`iterm2/globalkeymap.plist`) and/or the macOS keyboard shortcut plists | macOS |
 
 > **Note (`make hammerspoon`):** On first run, allow the permission prompts Hammerspoon shows
 > (it needs access to `~/Downloads` to see new screenshots).
