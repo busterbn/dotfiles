@@ -1,6 +1,6 @@
 #!/bin/sh
 # macOS defaults — run via `make macos [section ...]`
-# Sections: keyboard dock finder trackpad mouse screenshots sound windowmanager (default: all)
+# Sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager (default: all)
 # Backs up current values to an executable restore script before changing anything.
 set -e
 
@@ -38,6 +38,14 @@ keyboard() {
     set_default NSGlobalDomain WebAutomaticSpellingCorrectionEnabled bool false
     # Never auto-tab new windows, only manually
     set_default NSGlobalDomain AppleWindowTabbingMode string manual
+}
+
+keyboard_shortcuts() {
+    # Opt+Tab moves focus to next window (symbolic hotkey 27, nested dict so not backed up)
+    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 27 \
+        '<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>48</integer><integer>524288</integer></array><key>type</key><string>standard</string></dict></dict>'
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null \
+        || echo "note: could not apply hotkey changes live, log out and back in to apply"
 }
 
 dock() {
@@ -151,7 +159,7 @@ windowmanager() {
     set_default com.apple.WindowManager StandardHideWidgets bool true
 }
 
-ALL="keyboard dock finder trackpad mouse screenshots sound windowmanager"
+ALL="keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
 { [ $# -eq 0 ] || [ "$1" = all ]; } && set -- $ALL
 for section in "$@"; do
     echo "» $section"

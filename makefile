@@ -33,7 +33,7 @@ help:
 	@echo "  make git      - install global gitignore"
 	@echo "  make hammerspoon - install Hammerspoon + config (screenshots also go to clipboard)"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
-	@echo "                  optional sections: keyboard dock finder trackpad mouse screenshots sound windowmanager"
+	@echo "                  optional sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
 
 update:
 ifeq ($(PKG),apt-get)
@@ -117,7 +117,7 @@ ifneq ($(PKG),brew)
 endif
 	sh configs/macos.sh $(filter-out macos,$(MAKECMDGOALS))
 
-MACOS_SECTIONS := all keyboard dock finder trackpad mouse screenshots sound windowmanager
+MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager
 .PHONY: $(MACOS_SECTIONS)
 $(MACOS_SECTIONS):
 	@:
