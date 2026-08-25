@@ -37,7 +37,21 @@ hs.hotkey.bind({"cmd"}, "f5", toggleDarkMode)
 hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
 
 -- App launchers
-hs.hotkey.bind({"alt", "cmd"}, "space", toggle("Finder"))
+-- Cmd+Alt+Space: toggle Finder — but in VS Code, reveal the selected
+-- file/folder in Finder instead (via VS Code's own Cmd+Alt+R binding)
+local toggleFinder = toggle("Finder")
+hs.hotkey.bind({"alt", "cmd"}, "space", function()
+    if hs.application.frontmostApplication():name() == "Code" then
+        hs.eventtap.keyStroke({"cmd", "alt"}, "r")
+        -- nothing to reveal (no selection/active file) -> Finder never came
+        -- to the front, so fall back to the normal toggle
+        hs.timer.doAfter(0.4, function()
+            if hs.application.frontmostApplication():name() == "Code" then toggleFinder() end
+        end)
+    else
+        toggleFinder()
+    end
+end)
 -- With Finder in front, returns the front Finder window's folder (else nil)
 local function finderPath()
     if hs.application.frontmostApplication():name() ~= "Finder" then return nil end
@@ -47,14 +61,17 @@ local function finderPath()
 end
 
 -- Toggle the app — but with Finder in front, open Finder's folder in the app
-local function toggleOrOpenFolder(name, launchTarget)
+-- (openFolder overrides how the folder is opened; default is `open -a`)
+local function toggleOrOpenFolder(name, launchTarget, openFolder)
     local toggleApp = toggle(name, launchTarget)
     return function()
         local path = finderPath()
-        if path then
-            hs.execute('open -a "' .. (launchTarget or name) .. '" "' .. path .. '"')
-        else
+        if not path then
             toggleApp()
+        elseif openFolder then
+            openFolder(path)
+        else
+            hs.execute('open -a "' .. (launchTarget or name) .. '" "' .. path .. '"')
         end
     end
 end
@@ -66,7 +83,33 @@ local fnApps = {
     c = toggleOrOpenFolder("Code", "Visual Studio Code"),
     m = toggle("fMessenger", os.getenv("HOME") .. "/Applications/fMessenger.app"),
     n = toggle("Messages"),
-    o = toggle("Obsidian"),
+    -- obsidian://open only works for paths inside a known vault, so unknown
+    -- folders are first registered as vaults in obsidian.json — Obsidian only
+    -- reads that list at startup, so it gets restarted when we add one
+    o = toggleOrOpenFolder("Obsidian", nil, function(path)
+        path = path:gsub("(.)/$", "%1")
+        local file = os.getenv("HOME") .. "/Library/Application Support/obsidian/obsidian.json"
+        local cfg = hs.json.read(file) or {}
+        cfg.vaults = cfg.vaults or {}
+        local known = false
+        for _, v in pairs(cfg.vaults) do
+            if path == v.path or path:sub(1, #v.path + 1) == v.path .. "/" then known = true end
+        end
+        local function openVault()
+            hs.execute('open "obsidian://open?path=' .. hs.http.encodeForQuery(path) .. '"')
+        end
+        if not known then
+            cfg.vaults[hs.hash.MD5(path):sub(1, 16)] = {path = path, ts = os.time() * 1000}
+            hs.json.write(cfg, file, false, true)
+        end
+        local app = hs.application.get("Obsidian")
+        if not known and app then
+            app:kill()
+            hs.timer.waitUntil(function() return not hs.application.get("Obsidian") end, openVault, 0.1)
+        else
+            openVault()
+        end
+    end),
 }
 fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     local flags = e:getFlags()
