@@ -1,6 +1,6 @@
 #!/bin/sh
 # iTerm2 app settings — run via `make iterm2` ($1 = profile guid, passed by the Makefile).
-# The profile itself (colors, font, ...) lives in iterm2.json as a dynamic profile.
+# The profile itself (colors, font, ...) lives in profile.json as a dynamic profile.
 set -e
 
 # Use the dynamic profile as default

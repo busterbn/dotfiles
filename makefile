@@ -81,8 +81,8 @@ endif
 			cp $(HOME)/.zshrc $(HOME)/.zshrc.bak; \
 		fi \
 	fi
-	cp dotfiles/.zshrc $(HOME)/.zshrc
-	cp dotfiles/.p10k.zsh $(HOME)/.p10k.zsh
+	cp configs/zsh/.zshrc $(HOME)/.zshrc
+	cp configs/zsh/.p10k.zsh $(HOME)/.p10k.zsh
 	touch $(HOME)/.hushlogin
 	@python3 -c 'import json,os,sys; p=sys.argv[1]; s=json.load(open(p)) if os.path.exists(p) else {}; s.setdefault("terminal.integrated.fontFamily","MesloLGS NF"); os.makedirs(os.path.dirname(p),exist_ok=True); json.dump(s,open(p,"w"),indent=4)' "$(VSCODE_SETTINGS)"
 
@@ -92,13 +92,13 @@ ifneq ($(PKG),brew)
 endif
 	[ -d /Applications/iTerm.app ] || brew install --cask iterm2
 	mkdir -p "$(HOME)/Library/Application Support/iTerm2/DynamicProfiles"
-	python3 -c 'import json,os; p=json.load(open("configs/iterm2.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
-	sh configs/iterm2_defaults.sh $(ITERM_GUID)
+	python3 -c 'import json,os; p=json.load(open("configs/iterm2/profile.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
+	sh configs/iterm2/defaults.sh $(ITERM_GUID)
 	touch $(HOME)/.hushlogin
 	@echo "Restart iTerm2 to apply"
 
 git:
-	cp dotfiles/.gitignore_global $(HOME)/.gitignore_global
+	cp configs/git/.gitignore_global $(HOME)/.gitignore_global
 	git config --global core.excludesfile $(HOME)/.gitignore_global
 
 hammerspoon:
@@ -107,7 +107,7 @@ ifneq ($(PKG),brew)
 endif
 	[ -d /Applications/Hammerspoon.app ] || brew install --cask hammerspoon
 	mkdir -p $(HOME)/.hammerspoon
-	cp configs/hammerspoon.lua $(HOME)/.hammerspoon/init.lua
+	cp configs/hammerspoon/init.lua $(HOME)/.hammerspoon/init.lua
 	killall Hammerspoon 2>/dev/null || true
 	open -a Hammerspoon
 
@@ -115,7 +115,7 @@ macos:
 ifneq ($(PKG),brew)
 	$(error make macos is macOS only)
 endif
-	sh configs/macos_defaults.sh $(filter-out macos,$(MAKECMDGOALS))
+	sh configs/macos/defaults.sh $(filter-out macos,$(MAKECMDGOALS))
 
 MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager
 .PHONY: $(MACOS_SECTIONS)
