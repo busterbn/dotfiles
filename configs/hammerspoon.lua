@@ -134,20 +134,18 @@ snapTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     return true
 end):start()
 
--- Default window sizes: new windows from these apps open at a fixed frame
--- ({x, y, w, h} in screen units, same convention as the snapping cycles above)
-local defaultSizes = {
+-- Default window sizes: every new standard window opens at defaultSize
+-- unless its app has an override ({x, y, w, h} in screen units, same
+-- convention as the snapping cycles above)
+local defaultSize = {0.05, 0, 0.9, 1}
+local appSizes = {
     ["iTerm2"] = {1/4, 1/6, 1/2, 2/3},
     ["Finder"] = {0.15, 0, 0.7, 1},
-    ["Code"] = {0.05, 0, 0.9, 1},
-    ["Firefox"] = {0.05, 0, 0.9, 1},
-    ["Obsidian"] = {0.05, 0, 0.9, 1},
 }
-sizeFilter = hs.window.filter.new(false)
-for app in pairs(defaultSizes) do sizeFilter:allowApp(app) end
+sizeFilter = hs.window.filter.new()
 sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
-    local u = defaultSizes[appName]
-    if u and win:isStandard() then
+    local u = appSizes[appName] or defaultSize
+    if win:isStandard() then
         win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
     end
 end)
