@@ -18,7 +18,7 @@ else
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help update deps font p10k iterm2 ssh git macos screenclip
+.PHONY: help update deps font p10k iterm2 ssh git macos hammerspoon
 
 SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUeG60x8YPAyKq8lHlLkWJ7PSWMA9QT1UDZDjhBsV45 bn@mac.local
 
@@ -31,7 +31,7 @@ help:
 	@echo "  make iterm2   - install iTerm2 profile (macOS only)"
 	@echo "  make ssh      - authorize bn@mac.local ssh key (+ enable Remote Login on macOS)"
 	@echo "  make git      - install global gitignore"
-	@echo "  make screenclip - also copy new screenshots to the clipboard (macOS only)"
+	@echo "  make hammerspoon - install Hammerspoon + config (screenshots also go to clipboard)"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
 	@echo "                  optional sections: keyboard dock finder trackpad mouse screenshots sound windowmanager"
 
@@ -101,14 +101,15 @@ git:
 	cp dotfiles/.gitignore_global $(HOME)/.gitignore_global
 	git config --global core.excludesfile $(HOME)/.gitignore_global
 
-screenclip:
+hammerspoon:
 ifneq ($(PKG),brew)
-	$(error make screenclip is macOS only)
+	$(error make hammerspoon is macOS only)
 endif
-	mkdir -p $(HOME)/Library/LaunchAgents
-	sed "s|@HOME@|$(HOME)|g" configs/com.bn.screenshot-clipboard.plist > $(HOME)/Library/LaunchAgents/com.bn.screenshot-clipboard.plist
-	launchctl unload $(HOME)/Library/LaunchAgents/com.bn.screenshot-clipboard.plist 2>/dev/null || true
-	launchctl load $(HOME)/Library/LaunchAgents/com.bn.screenshot-clipboard.plist
+	[ -d /Applications/Hammerspoon.app ] || brew install --cask hammerspoon
+	mkdir -p $(HOME)/.hammerspoon
+	cp configs/hammerspoon.lua $(HOME)/.hammerspoon/init.lua
+	killall Hammerspoon 2>/dev/null || true
+	open -a Hammerspoon
 
 macos:
 ifneq ($(PKG),brew)
