@@ -93,7 +93,7 @@ endif
 	[ -d /Applications/iTerm.app ] || brew install --cask iterm2
 	mkdir -p "$(HOME)/Library/Application Support/iTerm2/DynamicProfiles"
 	python3 -c 'import json,os; p=json.load(open("configs/iterm2.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
-	defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$(ITERM_GUID)"
+	sh configs/iterm2_defaults.sh $(ITERM_GUID)
 	touch $(HOME)/.hushlogin
 	@echo "Restart iTerm2 to apply"
 
@@ -115,7 +115,7 @@ macos:
 ifneq ($(PKG),brew)
 	$(error make macos is macOS only)
 endif
-	sh configs/macos.sh $(filter-out macos,$(MAKECMDGOALS))
+	sh configs/macos_defaults.sh $(filter-out macos,$(MAKECMDGOALS))
 
 MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager
 .PHONY: $(MACOS_SECTIONS)
