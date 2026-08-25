@@ -29,6 +29,7 @@ hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
 
 -- App launchers
 hs.hotkey.bind({"alt", "cmd"}, "space", launch("Finder"))
+hs.hotkey.bind({"alt"}, "space", launch("iTerm"))
 
 -- Fn+key launchers: "fn" is not a real modifier in hs.hotkey, so use an eventtap
 local fnApps = {
