@@ -38,6 +38,10 @@ keyboard() {
     set_default NSGlobalDomain WebAutomaticSpellingCorrectionEnabled bool false
     # Never auto-tab new windows, only manually
     set_default NSGlobalDomain AppleWindowTabbingMode string manual
+    # Globe key does nothing (0=nothing 1=input source 2=emoji 3=dictation)
+    set_default com.apple.HIToolbox AppleFnUsageType int 0
+    # No full keyboard navigation with Tab
+    set_default NSGlobalDomain AppleKeyboardUIMode int 0
 }
 
 keyboard_shortcuts() {
@@ -71,6 +75,9 @@ dock() {
     set_default com.apple.dock wvous-br-corner int 1
     # Swipe down with three fingers for App Expose
     set_default com.apple.dock showAppExposeGestureEnabled bool true
+    # Mission Control and Show Desktop gestures on
+    set_default com.apple.dock showMissionControlGestureEnabled bool true
+    set_default com.apple.dock showDesktopGestureEnabled bool true
 }
 
 finder() {
@@ -123,9 +130,50 @@ trackpad() {
     set_default com.apple.AppleMultitouchTrackpad Clicking bool true
     # Max tracking speed (0-3)
     set_default NSGlobalDomain com.apple.trackpad.scaling float 3
+    # Medium click firmness (0/1/2 = light/medium/firm)
+    set_default com.apple.AppleMultitouchTrackpad FirstClickThreshold int 0
+    set_default com.apple.AppleMultitouchTrackpad SecondClickThreshold int 0
     # Disable Force Click (both keys are the same setting, seen from driver and system)
     set_default com.apple.AppleMultitouchTrackpad ForceSuppressed bool true
     set_default NSGlobalDomain com.apple.trackpad.forceClick bool false
+    # No haptic click feedback (silent clicking)
+    set_default com.apple.AppleMultitouchTrackpad ActuateDetents int 0
+    # Secondary click with two fingers (not corner click)
+    set_default com.apple.AppleMultitouchTrackpad TrackpadRightClick bool true
+    set_default com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick int 0
+    # Look up & data detectors on three-finger tap
+    set_default com.apple.AppleMultitouchTrackpad TrackpadThreeFingerTapGesture int 2
+    # Natural scrolling
+    set_default NSGlobalDomain com.apple.swipescrolldirection bool true
+    # Pinch to zoom
+    set_default com.apple.AppleMultitouchTrackpad TrackpadPinch bool true
+    # Smart zoom on two-finger double-tap
+    set_default com.apple.AppleMultitouchTrackpad TrackpadTwoFingerDoubleTapGesture int 1
+    # Rotate with two fingers
+    set_default com.apple.AppleMultitouchTrackpad TrackpadRotate bool true
+    # Swipe between pages by scrolling left/right with two fingers
+    set_default NSGlobalDomain AppleEnableSwipeNavigateWithScrolls bool true
+    # Swipe between full-screen apps with three fingers
+    set_default com.apple.AppleMultitouchTrackpad TrackpadThreeFingerHorizSwipeGesture int 2
+    # Notification Center: swipe left from the right edge with two fingers
+    set_default com.apple.AppleMultitouchTrackpad TrackpadTwoFingerFromRightEdgeSwipeGesture int 3
+    # Mission Control up / App Expose down with three fingers
+    set_default com.apple.AppleMultitouchTrackpad TrackpadThreeFingerVertSwipeGesture int 2
+    # Show Desktop: spread with thumb and three fingers
+    set_default com.apple.AppleMultitouchTrackpad TrackpadFourFingerPinchGesture int 2
+    set_default com.apple.AppleMultitouchTrackpad TrackpadFiveFingerPinchGesture int 2
+    # Mirror to external (Bluetooth) trackpads
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking bool true
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick bool true
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerTapGesture int 2
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadPinch bool true
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerDoubleTapGesture int 1
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRotate bool true
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerHorizSwipeGesture int 2
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerFromRightEdgeSwipeGesture int 3
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerVertSwipeGesture int 2
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerPinchGesture int 2
+    set_default com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFiveFingerPinchGesture int 2
 }
 
 mouse() {
