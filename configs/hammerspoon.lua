@@ -42,6 +42,7 @@ hs.hotkey.bind({"alt"}, "space", toggle("iTerm2", "iTerm"))
 
 -- Fn+key launchers: "fn" is not a real modifier in hs.hotkey, so use an eventtap
 local fnApps = {
+    c = toggle("Code", "Visual Studio Code"),
     m = toggle("fMessenger", os.getenv("HOME") .. "/Applications/fMessenger.app"),
     n = toggle("Messages"),
     o = toggle("Obsidian"),
@@ -132,6 +133,24 @@ snapTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     end
     return true
 end):start()
+
+-- Default window sizes: new windows from these apps open at a fixed frame
+-- ({x, y, w, h} in screen units, same convention as the snapping cycles above)
+local defaultSizes = {
+    ["iTerm2"] = {1/4, 1/6, 1/2, 2/3},
+    ["Finder"] = {0.15, 0, 0.7, 1},
+    ["Code"] = {0.05, 0, 0.9, 1},
+    ["Firefox"] = {0.05, 0, 0.9, 1},
+    ["Obsidian"] = {0.05, 0, 0.9, 1},
+}
+sizeFilter = hs.window.filter.new(false)
+for app in pairs(defaultSizes) do sizeFilter:allowApp(app) end
+sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
+    local u = defaultSizes[appName]
+    if u and win:isStandard() then
+        win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
+    end
+end)
 
 -- noTunes replacement: if Apple Music tries to launch (play/pause key,
 -- AirPods connect, ...), kill it and open Spotify instead
