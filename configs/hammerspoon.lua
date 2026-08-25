@@ -144,10 +144,15 @@ local appSizes = {
 }
 sizeFilter = hs.window.filter.new()
 sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
-    local u = appSizes[appName] or defaultSize
-    if win:isStandard() then
-        win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
+    if not win:isStandard() then return end
+    if appName == "System Settings" then
+        -- fixed-width window: keep its width, center it, full height
+        local f, s = win:frame(), win:screen():frame()
+        win:setFrame({x = s.x + (s.w - f.w) / 2, y = s.y, w = f.w, h = s.h})
+        return
     end
+    local u = appSizes[appName] or defaultSize
+    win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
 end)
 
 -- noTunes replacement: if Apple Music tries to launch (play/pause key,
