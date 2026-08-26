@@ -228,9 +228,29 @@ musicWatcher = hs.application.watcher.new(function(name, event, app)
     end
 end):start()
 
+-- Use Studio Display speakers + mic whenever it gets connected
+local function useStudioDisplay()
+    local out = hs.audiodevice.findOutputByName("Studio Display Speakers")
+    if out then out:setDefaultOutputDevice() end
+    local mic = hs.audiodevice.findInputByName("Studio Display Microphone")
+    if mic then mic:setDefaultInputDevice() end
+end
+local studioConnected = hs.audiodevice.findOutputByName("Studio Display Speakers") ~= nil
+-- Already docked at load (e.g. at login): claim the audio only if it's on the
+-- built-in devices, so a reload doesn't steal from headphones
+if studioConnected and hs.audiodevice.defaultOutputDevice():transportType() == "Built-in" then
+    useStudioDisplay()
+end
+
 -- Mute when audio output falls back from Bluetooth (headphones/speaker disconnected)
 local lastTransport = hs.audiodevice.defaultOutputDevice():transportType()
 hs.audiodevice.watcher.setCallback(function(event)
+    if event == "dev#" then -- device list changed: did the Studio Display just arrive?
+        local now = hs.audiodevice.findOutputByName("Studio Display Speakers") ~= nil
+        if now and not studioConnected then useStudioDisplay() end
+        studioConnected = now
+        return
+    end
     if event ~= "dOut" then return end
     local out = hs.audiodevice.defaultOutputDevice()
     if lastTransport == "Bluetooth" and out:transportType() ~= "Bluetooth" then
