@@ -203,10 +203,11 @@ end):start()
 -- convention as the snapping cycles above)
 local defaultSize = {0.05, 0, 0.9, 1}
 local appSizes = {
-    ["iTerm2"] = {1/4, 1/6, 1/2, 2/3},
     ["Finder"] = {0.15, 0, 0.7, 1},
 }
 sizeFilter = hs.window.filter.new()
+-- iTerm2 sizes itself via Columns/Rows in its profile, so leave it alone
+sizeFilter:rejectApp("iTerm2")
 sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
     if not win:isStandard() then return end
     if appName == "System Settings" then
