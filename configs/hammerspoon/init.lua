@@ -219,6 +219,18 @@ sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
     win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
 end)
 
+-- Any app activated without a window (Cmd+Tab, launchers, ...) gets one:
+-- "reopen" is what a Dock click sends — the app opens its default window
+-- if it has none, and does nothing otherwise
+reopenWatcher = hs.application.watcher.new(function(name, event, app)
+    if event ~= hs.application.watcher.activated then return end
+    hs.timer.doAfter(0.15, function()
+        if app:isFrontmost() and app:mainWindow() == nil and app:bundleID() then
+            hs.osascript.applescript('tell application id "' .. app:bundleID() .. '" to reopen')
+        end
+    end)
+end):start()
+
 -- noTunes replacement: if Apple Music tries to launch (play/pause key,
 -- AirPods connect, ...), kill it and open Spotify instead
 musicWatcher = hs.application.watcher.new(function(name, event, app)
