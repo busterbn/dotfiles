@@ -18,7 +18,7 @@ else
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help update deps font p10k iterm2 ssh git macos hammerspoon snapshot
+.PHONY: help update deps font p10k iterm2 ssh git macos hammerspoon obsidian snapshot
 
 # `make snapshot <target>` runs the snapshot target with <target> as an
 # argument, so the real install targets are no-ops while snapshotting
@@ -38,7 +38,8 @@ help:
 	@echo "  make hammerspoon - install Hammerspoon + config (screenshots also go to clipboard)"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
 	@echo "                  optional sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
-	@echo "  make snapshot [iterm2] [macos] - save current settings back into configs/"
+	@echo "  make obsidian - apply shared Obsidian config to all vaults"
+	@echo "  make snapshot [iterm2] [macos] [obsidian] - save current settings back into configs/"
 
 update:
 ifeq ($(PKG),apt-get)
@@ -126,6 +127,14 @@ ifeq ($(SNAPSHOTTING),)
 	sh configs/macos/defaults.sh $(filter-out macos,$(MAKECMDGOALS))
 endif
 
+obsidian:
+ifneq ($(PKG),brew)
+	$(error make obsidian is macOS only)
+endif
+ifeq ($(SNAPSHOTTING),)
+	sh configs/obsidian/sync.sh apply
+endif
+
 # Save current settings back into configs/ (e.g. after tweaking things in a GUI)
 snapshot:
 ifneq ($(PKG),brew)
@@ -138,8 +147,11 @@ ifneq ($(filter macos,$(MAKECMDGOALS)),)
 	defaults export com.apple.symbolichotkeys configs/macos/symbolichotkeys.plist
 	defaults export pbs configs/macos/services.plist
 endif
-ifeq ($(filter iterm2 macos,$(MAKECMDGOALS)),)
-	@echo "Usage: make snapshot [iterm2] [macos]"
+ifneq ($(filter obsidian,$(MAKECMDGOALS)),)
+	sh configs/obsidian/sync.sh snapshot
+endif
+ifeq ($(filter iterm2 macos obsidian,$(MAKECMDGOALS)),)
+	@echo "Usage: make snapshot [iterm2] [macos] [obsidian]"
 endif
 
 MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager

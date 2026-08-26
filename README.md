@@ -25,7 +25,8 @@ Installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles` and
 | `make git` | Install global gitignore | all |
 | `make macos [section …]` | Apply macOS defaults (backs up old values first) | macOS |
 | `make hammerspoon` | Hammerspoon + config: new screenshots are also copied to the clipboard | macOS |
-| `make snapshot [iterm2] [macos]` | Save current settings back into `configs/`: iTerm2 key bindings (`iterm2/globalkeymap.plist`) and/or the macOS keyboard shortcut plists | macOS |
+| `make obsidian` | Apply the shared Obsidian config (plugins, themes, appearance, snippets) to every known vault | macOS |
+| `make snapshot [iterm2] [macos] [obsidian]` | Save current settings back into `configs/`: iTerm2 key bindings, the macOS keyboard shortcut plists, and/or the main Obsidian vault's config | macOS |
 
 > **Note (`make hammerspoon`):** On first run, allow the permission prompts Hammerspoon shows
 > (it needs access to `~/Downloads` to see new screenshots).
@@ -65,5 +66,6 @@ dotfiles/
     ├── hammerspoon/  # init.lua
     ├── iterm2/       # profile.json, defaults.sh
     ├── macos/        # defaults.sh, keyboard shortcut snapshots
+    ├── obsidian/     # sync.sh + shared vault config (plugins, themes, ...)
     └── zsh/          # .zshrc, .p10k.zsh
 ```

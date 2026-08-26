@@ -1,0 +1,5 @@
+{
+  "realTimeUpdate": true,
+  "saveAttE": "nextToNoteS",
+  "mediaRootDir": "attachments/${notename}"
+}
