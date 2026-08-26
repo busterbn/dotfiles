@@ -201,7 +201,8 @@ end):start()
 -- Default window sizes: every new standard window opens at defaultSize
 -- unless its app has an override ({x, y, w, h} in screen units, same
 -- convention as the snapping cycles above)
-local defaultSize = {0.05, 0, 0.9, 1}
+local defaultSize = {0.05, 0, 0.9, 1}         -- on the built-in display
+local defaultSizeExternal = {0.1, 0, 0.8, 1}  -- on Studio Display & other externals
 local appSizes = {
     ["Finder"] = {0.15, 0, 0.7, 1},
 }
@@ -216,7 +217,8 @@ sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
         win:setFrame({x = s.x + (s.w - f.w) / 2, y = s.y, w = f.w, h = s.h})
         return
     end
-    local u = appSizes[appName] or defaultSize
+    local builtin = (win:screen():name() or ""):find("Built%-in")
+    local u = appSizes[appName] or (builtin and defaultSize or defaultSizeExternal)
     win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
 end)
 
