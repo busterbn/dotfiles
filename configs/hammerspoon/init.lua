@@ -34,6 +34,10 @@ end
 -- Cmd+E hides the current app (sends Cmd+H)
 hs.hotkey.bind({"cmd"}, "e", function() hs.eventtap.keyStroke({"cmd"}, "h") end)
 
+-- Cmd+3/4 screenshot like Cmd+Shift+3/4 (full screen / area)
+hs.hotkey.bind({"cmd"}, "3", function() hs.eventtap.keyStroke({"cmd", "shift"}, "3") end)
+hs.hotkey.bind({"cmd"}, "4", function() hs.eventtap.keyStroke({"cmd", "shift"}, "4") end)
+
 -- Toggle dark mode with Cmd+F5 or Cmd+moon key (raw keycode 178)
 hs.hotkey.bind({"cmd"}, "f5", toggleDarkMode)
 hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
