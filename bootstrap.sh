@@ -28,7 +28,6 @@ make deps
 make font
 make p10k
 make git
-make ssh
 
 # make macos must run alone: extra goals would be parsed as macos sections
 if [ "$(uname)" = "Darwin" ]; then
