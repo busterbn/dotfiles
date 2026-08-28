@@ -6,6 +6,10 @@
 # overwriting it, so the script is safe to run again.
 set -e
 
+# Wrapped in main() so `curl | sh` parses the whole script before running it —
+# otherwise a child process reading stdin eats the rest of the script.
+main() {
+
 DIR="$HOME/dotfiles"
 
 if [ "$(uname)" = "Darwin" ]; then
@@ -98,3 +102,6 @@ fi
 
 cd "$DIR"
 make
+
+}
+main "$@"
