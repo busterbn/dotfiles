@@ -14,11 +14,11 @@ Runs the full setup: installs git (and brew on macOS) if missing, clones the rep
 
 ## 🧰 Scripts
 
-| Script           | What it does                                                                                                                                                                                | Runs once?                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `bootstrap.sh` | Full setup: runs `install.sh`, then `make update deps font p10k git ssh` (+ `iterm2 hammerspoon macos obsidian` on macOS, run as separate make calls)                                 | Yes, guarded by `.bootstrapped` |
-| `install.sh`   | Installs brew/git if missing, clones the repo, backs up everything the make targets can change into `.backup/` (files, defaults domains, git config, Obsidian config), lists the commands | Yes, guarded by `.bootstrapped` |
-| `restore.sh`   | Puts everything back from `.backup/` and removes `.bootstrapped`. Installed packages/apps (brew, fonts, iTerm2, …) are left in place                                                    | —                                |
+| Script         | What it does                                                                                                                                                                              |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bootstrap.sh` | Full setup: runs `install.sh`, then `make update deps font p10k git ssh` (+ `iterm2 hammerspoon macos obsidian` on macOS, run as separate make calls). Safe to rerun                        |
+| `install.sh`   | Installs brew/git if missing, clones the repo, backs up everything the make targets can change into `.backup/` (files, defaults domains, git config, Obsidian config), lists the commands. The backup is only taken on the first run (guarded by `.initial_backup_done`) — reruns skip it instead of overwriting it |
+| `restore.sh`   | Puts everything back from `.backup/` and removes `.initial_backup_done`. Installed packages/apps (brew, fonts, iTerm2, …) are left in place                                                 |
 
 ## 📦 Commands
 

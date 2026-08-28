@@ -1,5 +1,5 @@
 #!/bin/sh
-# Undo bootstrap.sh: restore everything from .backup/ and remove .bootstrapped.
+# Undo bootstrap.sh: restore everything from .backup/ and remove .initial_backup_done.
 # Installed packages/apps (brew, fonts, iTerm2, Hammerspoon, ...) are left in place.
 set -e
 cd "$(dirname "$0")"
@@ -50,5 +50,5 @@ if [ "$(uname)" = "Darwin" ]; then
     killall Dock Finder SystemUIServer cfprefsd 2>/dev/null || true
 fi
 
-rm -f .bootstrapped
+rm -f .initial_backup_done
 echo "Restored from $BACKUP. Restart the terminal (and iTerm2/Hammerspoon/Obsidian) to see the old settings."

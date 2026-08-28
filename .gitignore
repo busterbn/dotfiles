@@ -3,7 +3,7 @@
 
 # bootstrap.sh state
 .backup/
-.bootstrapped
+.initial_backup_done
 
 # Python
 __pycache__/

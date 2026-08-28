@@ -70,7 +70,7 @@ p10k: font
 	@for t in git curl; do command -v $$t >/dev/null || $(INSTALL) $$t; done
 ifeq ($(PKG),apt-get)
 	sudo apt-get install -y zsh
-	[ "$$SHELL" = "$$(which zsh)" ] || chsh -s "$$(which zsh)"
+	[ "$$SHELL" = "$$(which zsh)" ] || sudo chsh -s "$$(which zsh)" $$USER
 else
 	osascript -e 'tell application "Terminal" to set font name of default settings to "MesloLGS-NF-Regular"' \
 		-e 'tell application "Terminal" to set font size of default settings to 13'

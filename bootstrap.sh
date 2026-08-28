@@ -1,7 +1,7 @@
 #!/bin/sh
 # Usage: curl -fsSL https://raw.githubusercontent.com/busterbn/dotfiles/main/bootstrap.sh | sh
-# Full setup: runs install.sh (deps + clone + backup + .bootstrapped guard),
-# then applies every make target. Undo with restore.sh.
+# Full setup: runs install.sh (deps + clone + initial backup, taken only once),
+# then applies every make target. Safe to rerun. Undo with restore.sh.
 set -e
 
 DIR="$HOME/dotfiles"
