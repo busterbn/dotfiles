@@ -10,7 +10,15 @@ Works on **macOS** (brew) and **Debian / Raspberry Pi OS** (apt).
 curl -fsSL https://raw.githubusercontent.com/busterbn/dotfiles/main/bootstrap.sh | sh
 ```
 
-Runs the full setup: installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles`, backs up everything that will be changed into `.backup/`, and applies every make target below. Use `install.sh` instead to only install/clone/backup and list the commands, and `restore.sh` to undo everything.
+Runs the full setup: installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles`, backs up everything that will be changed into `.backup/`, and applies every make target below.
+
+## 🧰 Scripts
+
+| Script           | What it does                                                                                                                                                                                | Runs once?                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `bootstrap.sh` | Full setup: runs `install.sh`, then `make update deps font p10k git ssh` (+ `iterm2 hammerspoon macos obsidian` on macOS, run as separate make calls)                                 | Yes, guarded by `.bootstrapped` |
+| `install.sh`   | Installs brew/git if missing, clones the repo, backs up everything the make targets can change into `.backup/` (files, defaults domains, git config, Obsidian config), lists the commands | Yes, guarded by `.bootstrapped` |
+| `restore.sh`   | Puts everything back from `.backup/` and removes `.bootstrapped`. Installed packages/apps (brew, fonts, iTerm2, …) are left in place                                                    | —                                |
 
 ## 📦 Commands
 
@@ -60,6 +68,9 @@ Before anything is changed, the old values are saved to an executable restore sc
 
 ```
 dotfiles/
+├── bootstrap.sh    # full setup: install.sh + all make targets
+├── install.sh      # brew/git + clone + backup into .backup/
+├── restore.sh      # undo everything from .backup/
 ├── makefile        # all the commands
 └── configs/
     ├── git/          # .gitignore_global
