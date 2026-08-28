@@ -34,7 +34,6 @@ if [ "$(uname)" = "Darwin" ]; then
     make iterm2
     make hammerspoon
     make macos
-    make obsidian
 fi
 
 }

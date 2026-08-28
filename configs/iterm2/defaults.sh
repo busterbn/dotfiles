@@ -27,4 +27,6 @@ defaults write com.googlecode.iterm2 AllowClipboardAccess -bool true
 defaults write com.googlecode.iterm2 DisableWindowSizeSnap -bool true
 # Global key bindings — refresh the snapshot with: make snapshot iterm2
 keymap="$(dirname "$0")/globalkeymap.plist"
-[ -f "$keymap" ] && defaults write com.googlecode.iterm2 GlobalKeyMap "$(cat "$keymap")"
+if [ -f "$keymap" ]; then
+    defaults write com.googlecode.iterm2 GlobalKeyMap "$(cat "$keymap")"
+fi

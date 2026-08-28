@@ -23,6 +23,10 @@ snapshot)
     echo "Snapshotted from $MAIN"
     ;;
 apply)
+    if [ ! -f "$HOME/Library/Application Support/obsidian/obsidian.json" ]; then
+        echo "No Obsidian vaults found — skipping"
+        exit 0
+    fi
     vaults | while read -r v; do
         [ -d "$v/.obsidian" ] || continue
         for i in $ITEMS; do
