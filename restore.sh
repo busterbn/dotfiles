@@ -17,6 +17,9 @@ BACKUP=".backup"
     cp -R "$BACKUP/files/$f" "$HOME/$f"
 done
 
+# login shell changed by `make p10k`
+[ -f "$BACKUP/login-shell" ] && sudo chsh -s "$(cat "$BACKUP/login-shell")" "$USER"
+
 # git config value set by `make git`
 if [ -f "$BACKUP/git-excludesfile" ]; then
     git config --global core.excludesfile "$(cat "$BACKUP/git-excludesfile")"

@@ -54,6 +54,9 @@ else
     git config --global core.excludesfile > "$BACKUP/git-excludesfile" 2>/dev/null \
         || rm -f "$BACKUP/git-excludesfile"
 
+    # login shell, changed by `make p10k` (chsh)
+    echo "$SHELL" > "$BACKUP/login-shell"
+
     if [ "$(uname)" = "Darwin" ]; then
         backup_file "Library/Application Support/Code/User/settings.json"
         backup_file "Library/Application Support/iTerm2/DynamicProfiles/init.json"
