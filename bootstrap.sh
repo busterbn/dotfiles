@@ -13,6 +13,12 @@ else
 fi
 
 cd "$DIR"
+
+# brew was installed by install.sh in a child process — put it in our PATH too
+if [ "$(uname)" = "Darwin" ] && ! command -v brew >/dev/null; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 make update
 make deps
 make font
