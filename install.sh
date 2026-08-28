@@ -10,7 +10,7 @@ DIR="$HOME/dotfiles"
 
 if [ "$(uname)" = "Darwin" ]; then
     if ! command -v brew >/dev/null; then
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/tty
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
     command -v git >/dev/null || brew install git
