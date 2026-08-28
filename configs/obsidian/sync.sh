@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")"
 
 MAIN="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault"
-ITEMS="app.json appearance.json community-plugins.json core-plugins.json webviewer.json plugins snippets themes"
+ITEMS="app.json appearance.json community-plugins.json core-plugins.json hotkeys.json webviewer.json plugins snippets themes"
 
 vaults() {
     python3 -c 'import json,os; [print(v["path"]) for v in json.load(open(os.path.expanduser("~/Library/Application Support/obsidian/obsidian.json")))["vaults"].values()]'

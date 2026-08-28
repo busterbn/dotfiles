@@ -1,5 +1,7 @@
 -- Hammerspoon config — installed to ~/.hammerspoon/init.lua via `make hammerspoon`
 
+require("hs.ipc") -- enables the `hs` CLI (debugging: hs -c "<lua>")
+
 -- Copy new screenshots in ~/Downloads to the clipboard (they still land as files too)
 local downloads = os.getenv("HOME") .. "/Downloads"
 screenshotWatcher = hs.pathwatcher.new(downloads, function(files, flags)
@@ -37,11 +39,36 @@ hs.hotkey.bind({"cmd"}, "f5", toggleDarkMode)
 hs.hotkey.bind({"cmd"}, 178, toggleDarkMode)
 
 -- App launchers
--- Cmd+Alt+Space: toggle Finder — but in VS Code, reveal the selected
--- file/folder in Finder instead (via VS Code's own Cmd+Alt+R binding)
+-- Folder context of the frontmost app: Finder's front window folder, or the
+-- folder of the file/folder selected in Obsidian (exported to
+-- ~/.obsidian-selection by the path-exporter plugin)
+local function contextPath()
+    local front = hs.application.frontmostApplication():name()
+    if front == "Finder" then
+        local ok, path = hs.osascript.applescript(
+            'tell application "Finder" to get POSIX path of (target of front window as alias)')
+        return ok and path or nil
+    end
+    if front == "Obsidian" then
+        local f = io.open(os.getenv("HOME") .. "/.obsidian-selection")
+        if not f then return nil end
+        local p = f:read("*l")
+        f:close()
+        local attrs = p and hs.fs.attributes(p)
+        if not attrs then return nil end
+        return attrs.mode == "directory" and p or p:match("(.*)/")
+    end
+end
+
+-- Cmd+Alt+Space: toggle Finder — but in VS Code, reveal the selected file in
+-- Finder (via VS Code's own Cmd+Alt+R binding), and in Obsidian, open the
+-- selected folder in Finder
 local toggleFinder = toggle("Finder")
 hs.hotkey.bind({"alt", "cmd"}, "space", function()
-    if hs.application.frontmostApplication():name() == "Code" then
+    local front = hs.application.frontmostApplication():name()
+    if front == "Obsidian" and contextPath() then
+        hs.execute('open "' .. contextPath() .. '"')
+    elseif front == "Code" then
         hs.eventtap.keyStroke({"cmd", "alt"}, "r")
         -- nothing to reveal (no selection/active file) -> Finder never came
         -- to the front, so fall back to the normal toggle
@@ -52,20 +79,13 @@ hs.hotkey.bind({"alt", "cmd"}, "space", function()
         toggleFinder()
     end
 end)
--- With Finder in front, returns the front Finder window's folder (else nil)
-local function finderPath()
-    if hs.application.frontmostApplication():name() ~= "Finder" then return nil end
-    local ok, path = hs.osascript.applescript(
-        'tell application "Finder" to get POSIX path of (target of front window as alias)')
-    return ok and path or nil
-end
-
--- Toggle the app — but with Finder in front, open Finder's folder in the app
+-- Toggle the app — but with a folder context in front (Finder or Obsidian),
+-- open that folder in the app instead
 -- (openFolder overrides how the folder is opened; default is `open -a`)
 local function toggleOrOpenFolder(name, launchTarget, openFolder)
     local toggleApp = toggle(name, launchTarget)
     return function()
-        local path = finderPath()
+        local path = hs.application.frontmostApplication():name() ~= name and contextPath() or nil
         if not path then
             toggleApp()
         elseif openFolder then
@@ -118,9 +138,17 @@ fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     end
     local fn = fnApps[hs.keycodes.map[e:getKeyCode()]]
     if not fn then return false end
-    fn()
+    -- run outside the callback: a slow action (AppleScript etc.) would make
+    -- macOS silently disable this eventtap
+    hs.timer.doAfter(0, fn)
     return true
 end):start()
+
+-- macOS disables eventtaps whose callbacks stall; quietly turn ours back on
+tapGuard = hs.timer.doEvery(10, function()
+    if not fnLauncher:isEnabled() then fnLauncher:start() end
+    if not snapTap:isEnabled() then snapTap:start() end
+end)
 
 -- Window snapping on Caps Lock (Loop replacement)
 -- Caps Lock is remapped to RIGHT Ctrl with hidutil, so holding Caps IS holding Ctrl
