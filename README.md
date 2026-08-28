@@ -7,7 +7,7 @@ Works on **macOS** (brew) and **Debian / Raspberry Pi OS** (apt).
 ## 🚀 Quick start
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/busterbn/dotfiles/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/busterbn/dotfiles/main/bootstrap.sh | sh
 ```
 
 Installs git (and brew on macOS) if missing, clones the repo to `~/dotfiles` and lists the available commands.

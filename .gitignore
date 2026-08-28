@@ -1,6 +1,10 @@
 # macOS
 .DS_Store
 
+# bootstrap.sh state
+.backup/
+.bootstrapped
+
 # Python
 __pycache__/
 *.pyc
