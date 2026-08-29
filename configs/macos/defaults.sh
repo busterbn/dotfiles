@@ -210,6 +210,8 @@ windowmanager() {
     set_default com.apple.WindowManager EnableTopTilingByEdgeDrag bool false
     # No Option-drag tiling
     set_default com.apple.WindowManager EnableTilingOptionAccelerator bool false
+    # Don't reveal the desktop when clicking the wallpaper (only in Stage Manager)
+    set_default com.apple.WindowManager EnableStandardClickToShowDesktop bool false
     # Hide desktop widgets
     set_default com.apple.WindowManager StandardHideWidgets bool true
     # No widgets at all (desktop + Notification Center). Dict value, so not in

@@ -2,11 +2,13 @@ ifeq ($(shell uname),Darwin)
 	PKG := brew
 	INSTALL := brew install
 	DEPS := curl git python just uv ripgrep fd
+	FONT_DIR := $(HOME)/Library/Fonts
 	export PATH := /opt/homebrew/bin:$(PATH)
 else
 	PKG := apt-get
 	INSTALL := sudo apt-get install -y
 	DEPS := curl git python3 python3-pip just ripgrep fd-find
+	FONT_DIR := $(HOME)/.local/share/fonts
 endif
 
 ZSH_CUSTOM := $(HOME)/.oh-my-zsh/custom
@@ -55,16 +57,12 @@ ifeq ($(PKG),apt-get)
 endif
 
 font:
-ifeq ($(PKG),apt-get)
-	@mkdir -p $(HOME)/.local/share/fonts
+	@mkdir -p "$(FONT_DIR)"
 	@for s in Regular Bold Italic "Bold Italic"; do \
 		f="MesloLGS NF $$s.ttf"; \
-		[ -f "$(HOME)/.local/share/fonts/$$f" ] || curl -fsSL -o "$(HOME)/.local/share/fonts/$$f" "https://github.com/romkatv/powerlevel10k-media/raw/master/$$(echo $$f | sed 's/ /%20/g')"; \
+		[ -f "$(FONT_DIR)/$$f" ] || curl -fsSL -o "$(FONT_DIR)/$$f" "https://github.com/romkatv/powerlevel10k-media/raw/master/$$(echo $$f | sed 's/ /%20/g')"; \
 	done
 	@command -v fc-cache >/dev/null && fc-cache -f || true
-else
-	brew list --cask font-meslo-lg-nerd-font >/dev/null 2>&1 || brew install --cask font-meslo-lg-nerd-font
-endif
 
 p10k: font
 	@for t in git curl; do command -v $$t >/dev/null || $(INSTALL) $$t; done

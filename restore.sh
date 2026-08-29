@@ -28,9 +28,13 @@ else
 fi
 
 if [ "$(uname)" = "Darwin" ]; then
+    # delete before import: import merges, so added keys would otherwise survive
     for p in "$BACKUP/defaults"/*.plist; do
         [ -e "$p" ] || continue
-        defaults import "$(basename "$p" .plist)" "$p"
+        d=$(basename "$p" .plist)
+        defaults delete "$d" 2>/dev/null || true
+        defaults import "$d" "$p"
+        echo "Restored defaults: $d"
     done
     [ -f "$BACKUP/absent-defaults" ] && while read -r d; do
         defaults delete "$d" 2>/dev/null || true
@@ -50,8 +54,10 @@ if [ "$(uname)" = "Darwin" ]; then
     fi
 
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
-    killall Dock Finder SystemUIServer cfprefsd 2>/dev/null || true
+    killall Hammerspoon 2>/dev/null || true
+    killall "System Settings" 2>/dev/null || true
+    killall Dock Finder SystemUIServer NotificationCenter cfprefsd 2>/dev/null || true
 fi
 
 rm -f .initial_backup_done
-echo "Restored from $BACKUP. Restart the terminal (and iTerm2/Hammerspoon/Obsidian) to see the old settings."
+echo "Restored from $BACKUP. Log out and back in for keyboard/trackpad/shell changes to fully apply."
