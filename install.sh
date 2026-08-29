@@ -65,6 +65,11 @@ else
         backup_file "Library/Application Support/Code/User/settings.json"
         backup_file "Library/Application Support/iTerm2/DynamicProfiles/init.json"
 
+        # apps installed by make iterm2 / make hammerspoon — uninstalled on
+        # restore if they weren't installed before bootstrap
+        [ -d /Applications/iTerm.app ] || echo iterm2 >> "$BACKUP/absent-casks"
+        [ -d /Applications/Hammerspoon.app ] || echo hammerspoon >> "$BACKUP/absent-casks"
+
         # Every defaults domain touched by make iterm2 / make macos
         for domain in com.googlecode.iterm2 com.apple.symbolichotkeys pbs NSGlobalDomain \
                 com.apple.dock com.apple.finder com.apple.desktopservices com.apple.HIToolbox \

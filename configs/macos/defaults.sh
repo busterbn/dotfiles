@@ -226,5 +226,5 @@ for section in "$@"; do
     $section
 done
 
-killall Dock Finder SystemUIServer NotificationCenter 2>/dev/null || true
+killall Dock Finder SystemUIServer NotificationCenter WindowManager 2>/dev/null || true
 echo "Done. Restore old settings with: sh $BACKUP"

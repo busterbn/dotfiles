@@ -18,7 +18,7 @@ Runs the full setup: installs git (and brew on macOS) if missing, clones the rep
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bootstrap.sh` | Full setup: runs `install.sh`, then `make update deps font p10k git` (+ `iterm2 hammerspoon macos` on macOS, run as separate make calls). Safe to rerun. `make ssh` and `make obsidian` must be run manually |
 | `install.sh`   | Installs brew/git if missing, clones the repo, backs up everything the make targets can change into `.backup/` (files, defaults domains, git config, Obsidian config), lists the commands. The backup is only taken on the first run (guarded by `.initial_backup_done`) — reruns skip it instead of overwriting it |
-| `restore.sh`   | Puts everything back from `.backup/` and removes `.initial_backup_done`. Installed packages/apps (brew, fonts, iTerm2, …) are left in place                                                 |
+| `restore.sh`   | Puts everything back from `.backup/` and removes `.initial_backup_done`. iTerm2/Hammerspoon are uninstalled if they weren't installed before bootstrap; brew packages and fonts are left in place |
 
 ## 📦 Commands
 

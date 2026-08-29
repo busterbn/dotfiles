@@ -56,7 +56,16 @@ if [ "$(uname)" = "Darwin" ]; then
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
     killall Hammerspoon 2>/dev/null || true
     killall "System Settings" 2>/dev/null || true
-    killall Dock Finder SystemUIServer NotificationCenter cfprefsd 2>/dev/null || true
+    killall Dock Finder SystemUIServer NotificationCenter WindowManager cfprefsd 2>/dev/null || true
+
+    # uninstall apps that weren't installed before bootstrap
+    if [ -f "$BACKUP/absent-casks" ]; then
+        command -v brew >/dev/null || eval "$(/opt/homebrew/bin/brew shellenv)"
+        while read -r c; do
+            [ "$c" = iterm2 ] && killall iTerm2 2>/dev/null || true
+            brew uninstall --cask "$c" 2>/dev/null || true
+        done < "$BACKUP/absent-casks"
+    fi
 fi
 
 rm -f .initial_backup_done
