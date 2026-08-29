@@ -212,6 +212,9 @@ windowmanager() {
     set_default com.apple.WindowManager EnableTilingOptionAccelerator bool false
     # Hide desktop widgets
     set_default com.apple.WindowManager StandardHideWidgets bool true
+    # No widgets at all (desktop + Notification Center). Dict value, so not in
+    # the per-key backup script; the full domain is in bootstrap's .backup
+    defaults write com.apple.notificationcenterui widgets '{ instances = (); vers = 1; }'
 }
 
 ALL="keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
@@ -221,5 +224,5 @@ for section in "$@"; do
     $section
 done
 
-killall Dock Finder SystemUIServer 2>/dev/null || true
+killall Dock Finder SystemUIServer NotificationCenter 2>/dev/null || true
 echo "Done. Restore old settings with: sh $BACKUP"

@@ -69,7 +69,7 @@ else
         for domain in com.googlecode.iterm2 com.apple.symbolichotkeys pbs NSGlobalDomain \
                 com.apple.dock com.apple.finder com.apple.desktopservices com.apple.HIToolbox \
                 com.apple.AppleMultitouchTrackpad com.apple.driver.AppleBluetoothMultitouch.trackpad \
-                com.apple.screencapture com.apple.WindowManager; do
+                com.apple.screencapture com.apple.WindowManager com.apple.notificationcenterui; do
             defaults export "$domain" "$BACKUP/defaults/$domain.plist" 2>/dev/null \
                 || echo "$domain" >> "$BACKUP/absent-defaults"
         done
