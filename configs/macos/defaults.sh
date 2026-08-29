@@ -57,6 +57,9 @@ keyboard_shortcuts() {
 }
 
 dock() {
+    # Remove all pinned apps. Not in the per-key backup script (array value),
+    # but the full dock domain is saved in bootstrap's .backup
+    defaults write com.apple.dock persistent-apps -array
     # Auto-hide the dock
     set_default com.apple.dock autohide bool true
     # Show the hidden dock immediately on hover

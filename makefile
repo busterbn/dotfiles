@@ -97,7 +97,7 @@ ifneq ($(PKG),brew)
 	$(error make iterm2 is macOS only)
 endif
 ifeq ($(SNAPSHOTTING),)
-	[ -d /Applications/iTerm.app ] || brew install --cask iterm2
+	[ -d /Applications/iTerm.app ] || brew install --cask --no-quarantine iterm2
 	mkdir -p "$(HOME)/Library/Application Support/iTerm2/DynamicProfiles"
 	python3 -c 'import json,os; p=json.load(open("configs/iterm2/profile.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
 	sh configs/iterm2/defaults.sh $(ITERM_GUID)
@@ -113,7 +113,7 @@ hammerspoon:
 ifneq ($(PKG),brew)
 	$(error make hammerspoon is macOS only)
 endif
-	[ -d /Applications/Hammerspoon.app ] || brew install --cask hammerspoon
+	[ -d /Applications/Hammerspoon.app ] || brew install --cask --no-quarantine hammerspoon
 	mkdir -p $(HOME)/.hammerspoon
 	cp configs/hammerspoon/init.lua $(HOME)/.hammerspoon/init.lua
 	killall Hammerspoon 2>/dev/null || true
