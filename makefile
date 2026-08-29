@@ -117,7 +117,7 @@ endif
 	mkdir -p $(HOME)/.hammerspoon
 	cp configs/hammerspoon/init.lua $(HOME)/.hammerspoon/init.lua
 	killall Hammerspoon 2>/dev/null || true
-	open -a Hammerspoon
+	open /Applications/Hammerspoon.app
 
 macos:
 ifneq ($(PKG),brew)
