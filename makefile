@@ -69,6 +69,11 @@ p10k: font
 ifeq ($(PKG),apt-get)
 	sudo apt-get install -y zsh
 	[ "$$SHELL" = "$$(which zsh)" ] || sudo chsh -s "$$(which zsh)" $$USER
+	@if command -v gsettings >/dev/null 2>&1; then \
+		p=$$(gsettings get org.gnome.Terminal.ProfilesList default 2>/dev/null | tr -d "'"); \
+		[ -n "$$p" ] && gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$$p/ use-system-font false \
+			&& gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$$p/ font 'MesloLGS NF 13' || true; \
+	fi
 else
 	osascript -e 'tell application "Terminal" to set font name of default settings to "MesloLGS-NF-Regular"' \
 		-e 'tell application "Terminal" to set font size of default settings to 13'
