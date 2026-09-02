@@ -18,9 +18,9 @@ end):start()
 -- `name` is the running process name; `launchTarget` the launch name/path if it differs.
 local function toggle(name, launchTarget)
     return function()
-        local app = hs.application.get(name)
-        if app and app:isFrontmost() then
-            app:hide()
+        local front = hs.application.frontmostApplication()
+        if front:name() == name then
+            front:hide()
         else
             hs.application.launchOrFocus(launchTarget or name)
         end
@@ -107,33 +107,7 @@ local fnApps = {
     c = toggleOrOpenFolder("Code", "Visual Studio Code"),
     m = toggle("fMessenger", os.getenv("HOME") .. "/Applications/fMessenger.app"),
     n = toggle("Messages"),
-    -- obsidian://open only works for paths inside a known vault, so unknown
-    -- folders are first registered as vaults in obsidian.json — Obsidian only
-    -- reads that list at startup, so it gets restarted when we add one
-    o = toggleOrOpenFolder("Obsidian", nil, function(path)
-        path = path:gsub("(.)/$", "%1")
-        local file = os.getenv("HOME") .. "/Library/Application Support/obsidian/obsidian.json"
-        local cfg = hs.json.read(file) or {}
-        cfg.vaults = cfg.vaults or {}
-        local known = false
-        for _, v in pairs(cfg.vaults) do
-            if path == v.path or path:sub(1, #v.path + 1) == v.path .. "/" then known = true end
-        end
-        local function openVault()
-            hs.execute('open "obsidian://open?path=' .. hs.http.encodeForQuery(path) .. '"')
-        end
-        if not known then
-            cfg.vaults[hs.hash.MD5(path):sub(1, 16)] = {path = path, ts = os.time() * 1000}
-            hs.json.write(cfg, file, false, true)
-        end
-        local app = hs.application.get("Obsidian")
-        if not known and app then
-            app:kill()
-            hs.timer.waitUntil(function() return not hs.application.get("Obsidian") end, openVault, 0.1)
-        else
-            openVault()
-        end
-    end),
+    o = toggle("Obsidian"),
 }
 fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     local flags = e:getFlags()

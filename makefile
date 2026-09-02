@@ -122,6 +122,7 @@ endif
 	mkdir -p $(HOME)/.hammerspoon
 	cp configs/hammerspoon/init.lua $(HOME)/.hammerspoon/init.lua
 	killall Hammerspoon 2>/dev/null || true
+	while pgrep -xq Hammerspoon; do sleep 0.2; done
 	open /Applications/Hammerspoon.app
 
 macos:
