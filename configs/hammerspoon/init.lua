@@ -208,7 +208,7 @@ end):start()
 -- unless its app has an override ({x, y, w, h} in screen units, same
 -- convention as the snapping cycles above)
 local defaultSize = {0.05, 0, 0.9, 1}         -- on the built-in display
-local defaultSizeExternal = {0.1, 0, 0.8, 1}  -- on Studio Display & other externals
+local defaultSizeExternal = {0.15, 0, 0.7, 1}  -- on Studio Display & other externals
 local appSizes = {
     ["Finder"] = {0.15, 0, 0.7, 1},
 }
