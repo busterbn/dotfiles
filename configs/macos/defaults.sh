@@ -122,6 +122,18 @@ finder() {
     set_default com.apple.finder WarnOnEmptyTrash bool false
     # No "Recent Tags" in the sidebar
     set_default com.apple.finder ShowRecentTags bool false
+    # Downloads: list view sorted by modification date, newest first (stored in the folder's .DS_Store)
+    osascript <<'AS'
+tell application "Finder"
+    set w to make new Finder window to (path to downloads folder)
+    set current view of w to list view
+    tell list view options of w
+        set sort column to modification date column
+        set sort direction of sort column to reversed
+    end tell
+    close w
+end tell
+AS
     # Faster spring-loaded folders when dragging
     set_default NSGlobalDomain com.apple.springing.delay float 0.2
     # Small sidebar icons (1-3 = small/medium/large)
