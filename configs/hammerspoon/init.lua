@@ -142,6 +142,11 @@ local cycles = {
     d = {{1/2, 0, 1/2, 1}, {1/3, 0, 2/3, 1}, {1/4, 0, 3/4, 1}, {3/4, 0, 1/4, 1}, {2/3, 0, 1/3, 1}},
     s = {{1/3, 0, 1/3, 1}, {1/4, 0, 1/2, 1}, {0.2, 0, 0.6, 1}, {0.15, 0, 0.7, 1}, {0.1, 0, 0.8, 1}, {0.05, 0, 0.9, 1}},
 }
+-- On a portrait screen, s and w cycle vertically instead
+local portraitCycles = {
+    s = {{0, 3/4, 1, 1/4}, {0, 1/2, 1, 1/2}, {0, 1/4, 1, 3/4}},
+    w = {{0, 0, 1, 1}, {0, 0, 1, 1/2}, {0, 0, 1, 1/4}},
+}
 -- Two direction keys within 0.35s = quarter of the screen
 local quarters = {
     wa = {0, 0, 1/2, 1/2}, wd = {1/2, 0, 1/2, 1/2},
@@ -165,7 +170,10 @@ local function snapPress(key)
         end
     end
 
-    if key == "w" then -- maximize, press again to restore the previous frame
+    local sf = win:screen():frame()
+    local cyc = sf.h > sf.w and portraitCycles[key] or cycles[key]
+
+    if key == "w" and not cyc then -- maximize, press again to restore the previous frame
         if st.key == "w" and st.restore then
             win:setFrame(st.restore)
             snapState[win:id()] = {key = key, time = now}
@@ -177,8 +185,8 @@ local function snapPress(key)
         return
     end
 
-    local idx = (st.key == key and st.idx) and (st.idx % #cycles[key]) + 1 or 1
-    local u = cycles[key][idx]
+    local idx = (st.key == key and st.idx) and (st.idx % #cyc) + 1 or 1
+    local u = cyc[idx]
     win:moveToUnit({x = u[1], y = u[2], w = u[3], h = u[4]})
     snapState[win:id()] = {key = key, idx = idx, time = now}
 end
