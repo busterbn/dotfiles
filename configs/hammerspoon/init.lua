@@ -225,6 +225,17 @@ sizeFilter = hs.window.filter.new()
 sizeFilter:rejectApp("iTerm2")
 sizeFilter:subscribe(hs.window.filter.windowCreated, function(win, appName)
     if not win:isStandard() then return end
+    if appName == "BarYield" then
+        -- BarYield dashboard: full screen on a rotated (portrait) monitor if one
+        -- is connected, otherwise fall through to the normal default size
+        for _, s in ipairs(hs.screen.allScreens()) do
+            if s:rotate() == 90 or s:rotate() == 270 then
+                win:moveToScreen(s)
+                hs.timer.doAfter(0.3, function() win:setFullScreen(true) end)
+                return
+            end
+        end
+    end
     if appName == "System Settings" then
         -- fixed-width window: keep its width, center it, full height
         local f, s = win:frame(), win:screen():frame()
