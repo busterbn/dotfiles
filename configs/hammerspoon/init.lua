@@ -122,10 +122,30 @@ fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     return true
 end):start()
 
+-- BarYield office: tell the dashboard the CEO is typing while the Claude app is focused.
+-- Sends only a boolean (never key contents), at most every 2 s; the server expires it after 6 s.
+local lastTyping = 0
+typingTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
+    local flags = e:getFlags()
+    if flags.cmd or flags.ctrl then return false end
+    local now = hs.timer.secondsSinceEpoch()
+    if now - lastTyping < 2 then return false end
+    local front = hs.application.frontmostApplication()
+    if front and front:bundleID() == "com.anthropic.claudefordesktop" then
+        lastTyping = now
+        hs.timer.doAfter(0, function()
+            hs.http.asyncPost("https://dev.baryield.com/api/presence", '{"typing": true}',
+                {["Content-Type"] = "application/json"}, function() end)
+        end)
+    end
+    return false
+end):start()
+
 -- macOS disables eventtaps whose callbacks stall; quietly turn ours back on
 tapGuard = hs.timer.doEvery(10, function()
     if not fnLauncher:isEnabled() then fnLauncher:start() end
     if not snapTap:isEnabled() then snapTap:start() end
+    if not typingTap:isEnabled() then typingTap:start() end
 end)
 
 -- Window snapping on Caps Lock (Loop replacement)
