@@ -106,8 +106,8 @@ finder() {
     set_default com.apple.finder NewWindowTargetPath string "file://$HOME/Downloads/"
     # Open folders in new windows instead of tabs
     set_default com.apple.finder FinderSpawnTab bool false
-    # Allow quitting Finder with Cmd+Q
-    set_default com.apple.finder QuitMenuItem bool true
+    # No Cmd+Q in Finder
+    set_default com.apple.finder QuitMenuItem bool false
     # No warning when changing a file extension
     set_default com.apple.finder FXEnableExtensionChangeWarning bool false
     # Save dialogs always open expanded with the folder tree
