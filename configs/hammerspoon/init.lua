@@ -122,7 +122,8 @@ fnLauncher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     return true
 end):start()
 
--- BarYield office: tell the dashboard the CEO is typing while the Claude app is focused.
+-- BarYield office: tell the dashboard the CEO is typing whenever BarYield.app is
+-- running, whatever app is in front (Claude app, terminal, ...).
 -- Sends only a boolean (never key contents), at most every 2 s; the server expires it after 6 s.
 local lastTyping = 0
 typingTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
@@ -130,8 +131,7 @@ typingTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     if flags.cmd or flags.ctrl then return false end
     local now = hs.timer.secondsSinceEpoch()
     if now - lastTyping < 2 then return false end
-    local front = hs.application.frontmostApplication()
-    if front and front:bundleID() == "com.anthropic.claudefordesktop" then
+    if hs.application.get("com.baryield.dashboard") then
         lastTyping = now
         hs.timer.doAfter(0, function()
             hs.http.asyncPost("https://dev.baryield.com/api/presence", '{"typing": true}',
