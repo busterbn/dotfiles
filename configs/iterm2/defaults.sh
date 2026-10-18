@@ -30,3 +30,17 @@ keymap="$(dirname "$0")/globalkeymap.plist"
 if [ -f "$keymap" ]; then
     defaults write com.googlecode.iterm2 GlobalKeyMap "$(cat "$keymap")"
 fi
+# No Claude Code integration (the Chat/Diff/Code Review bar iTerm2 adds when claude runs):
+# drop its workgroup and the Enter/Exit Workgroup triggers from every profile, and don't
+# nag about repairing it. The cc-status hooks it put in ~/.claude/settings.json are not touched here.
+defaults export com.googlecode.iterm2 - | python3 -c '
+import plistlib, json, sys
+d = plistlib.loads(sys.stdin.buffer.read())
+if "Workgroups" in d:
+    d["Workgroups"] = json.dumps([w for w in json.loads(d["Workgroups"]) if w.get("uniqueIdentifier") != "builtin.claudeCode"]).encode()  # stored as data, not string
+for p in d.get("New Bookmarks", []):
+    if "Triggers" in p:
+        p["Triggers"] = [t for t in p["Triggers"] if "Workgroup" not in t.get("action", "")]
+sys.stdout.buffer.write(plistlib.dumps(d))
+' | defaults import com.googlecode.iterm2 -
+defaults write com.googlecode.iterm2 NoSyncSuppressClaudeCodeIntegrationRepairPrompt -bool true

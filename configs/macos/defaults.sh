@@ -1,6 +1,6 @@
 #!/bin/sh
 # macOS defaults — run via `make macos [section ...]`
-# Sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager (default: all)
+# Sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager misc (default: all)
 # Backs up current values to an executable restore script before changing anything.
 set -e
 
@@ -231,7 +231,12 @@ windowmanager() {
     defaults write com.apple.notificationcenterui widgets '{ instances = (); vers = 1; }'
 }
 
-ALL="keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
+misc() {
+    # No "application quit unexpectedly" dialog after a crash
+    set_default com.apple.CrashReporter DialogType string none
+}
+
+ALL="keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager misc"
 { [ $# -eq 0 ] || [ "$1" = all ]; } && set -- $ALL
 for section in "$@"; do
     echo "» $section"

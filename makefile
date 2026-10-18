@@ -39,7 +39,7 @@ help:
 	@echo "  make git      - install global gitignore"
 	@echo "  make hammerspoon - install Hammerspoon + config (screenshots also go to clipboard)"
 	@echo "  make macos    - apply macOS defaults, backs up old values first"
-	@echo "                  optional sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager"
+	@echo "                  optional sections: keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager misc"
 	@echo "  make obsidian - apply shared Obsidian config to all vaults"
 	@echo "  make snapshot [iterm2] [macos] [obsidian] - save current settings back into configs/"
 
@@ -104,9 +104,9 @@ ifeq ($(SNAPSHOTTING),)
 	xattr -dr com.apple.quarantine /Applications/iTerm.app 2>/dev/null || true
 	mkdir -p "$(HOME)/Library/Application Support/iTerm2/DynamicProfiles"
 	python3 -c 'import json,os; p=json.load(open("configs/iterm2/profile.json")); p["Guid"]="$(ITERM_GUID)"; p["Name"]="Buster"; json.dump({"Profiles":[p]}, open(os.path.expanduser("~/Library/Application Support/iTerm2/DynamicProfiles/init.json"),"w"))'
+	@pgrep -xq iTerm2 && { echo "Quit iTerm2 first (it overwrites its settings on quit), then rerun from Terminal.app"; exit 1; } || true
 	sh configs/iterm2/defaults.sh $(ITERM_GUID)
 	touch $(HOME)/.hushlogin
-	@echo "Restart iTerm2 to apply"
 endif
 
 git:
@@ -160,7 +160,7 @@ ifeq ($(filter iterm2 macos obsidian,$(MAKECMDGOALS)),)
 	@echo "Usage: make snapshot [iterm2] [macos] [obsidian]"
 endif
 
-MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager
+MACOS_SECTIONS := all keyboard keyboard_shortcuts dock finder trackpad mouse screenshots sound windowmanager misc
 .PHONY: $(MACOS_SECTIONS)
 $(MACOS_SECTIONS):
 	@:
