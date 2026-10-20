@@ -320,4 +320,20 @@ hs.audiodevice.watcher.setCallback(function(event)
 end)
 hs.audiodevice.watcher.start()
 
+-- BetterDisplay runs only while an external display is connected
+local function syncBetterDisplay()
+    local external = false
+    for _, s in ipairs(hs.screen.allScreens()) do
+        if not (s:name() or ""):find("Built%-in") then external = true end
+    end
+    local app = hs.application.get("pro.betterdisplay.BetterDisplay")
+    if external and not app then
+        hs.application.open("pro.betterdisplay.BetterDisplay")
+    elseif not external and app then
+        app:kill()
+    end
+end
+betterDisplayWatcher = hs.screen.watcher.new(syncBetterDisplay):start()
+syncBetterDisplay()
+
 hs.notify.show("Hammerspoon", "", "Config loaded")
